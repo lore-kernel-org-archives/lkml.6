@@ -4,74 +4,367 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BB7C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C78FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A5A21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF22E21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbfB0HAE (ORCPT
+        id S1729479AbfB0HFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:00:04 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:4044 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726931AbfB0HAE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:00:04 -0500
-X-IronPort-AV: E=Sophos;i="5.58,418,1544454000"; 
-   d="scan'208";a="8979692"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Feb 2019 16:00:02 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 525144031DA5;
-        Wed, 27 Feb 2019 16:00:02 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com
-Cc:     julia.lawall@lip6.fr, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] phy: renesas: rcar-gen2: Fix memory leak at error paths
-Date:   Wed, 27 Feb 2019 16:00:26 +0900
-Message-Id: <1551250826-10302-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 27 Feb 2019 02:05:38 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39324 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726925AbfB0HFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 02:05:38 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 54A18C0E3AEB23B7369D;
+        Wed, 27 Feb 2019 15:05:35 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
+ 15:05:28 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <oded.gabbay@gmail.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <rppt@linux.ibm.com>,
+        <oshpigelman@habana.ai>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] habanalabs: goya: Make some functions static
+Date:   Wed, 27 Feb 2019 14:57:59 +0800
+Message-ID: <20190227065759.21700-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes memory leak at error paths of the probe function.
-In for_each_child_of_node, if the loop returns, the driver should
-call of_put_node() before returns.
+From: YueHaibing <yuehaibing@huawei.com>
 
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes the following sparse warnings:
+
+drivers/misc/habanalabs/goya/goya.c:1233:5: warning: symbol 'goya_init_cpu_queues' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:2914:5: warning: symbol 'goya_suspend' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:2939:5: warning: symbol 'goya_resume' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:2952:5: warning: symbol 'goya_mmap' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:2957:5: warning: symbol 'goya_cb_mmap' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:2973:6: warning: symbol 'goya_ring_doorbell' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3063:6: warning: symbol 'goya_flush_pq_write' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3068:6: warning: symbol 'goya_dma_alloc_coherent' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3074:6: warning: symbol 'goya_dma_free_coherent' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3080:6: warning: symbol 'goya_get_int_queue_base' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3138:5: warning: symbol 'goya_send_job_on_qman0' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3295:5: warning: symbol 'goya_test_queue' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3411:6: warning: symbol 'goya_dma_pool_zalloc' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3420:6: warning: symbol 'goya_dma_pool_free' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3426:6: warning: symbol 'goya_cpu_accessible_dma_pool_alloc' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3442:6: warning: symbol 'goya_cpu_accessible_dma_pool_free' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3452:5: warning: symbol 'goya_dma_map_sg' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3461:6: warning: symbol 'goya_dma_unmap_sg' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:3467:5: warning: symbol 'goya_get_dma_desc_list_size' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:396:5: warning: symbol 'goya_send_pci_access_msg' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:417:5: warning: symbol 'goya_pci_bars_map' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:4202:5: warning: symbol 'goya_parse_cb_no_mmu' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:4253:5: warning: symbol 'goya_parse_cb_no_ext_quque' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:4286:5: warning: symbol 'goya_cs_parser' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:4299:6: warning: symbol 'goya_add_end_of_cb_packets' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:557:6: warning: symbol 'goya_reset_link_through_bridge' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:774:5: warning: symbol 'goya_early_fini' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:857:6: warning: symbol 'goya_late_fini' was not declared. Should it be static?
+drivers/misc/habanalabs/goya/goya.c:971:5: warning: symbol 'goya_sw_fini' was not declared. Should it be static?
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/habanalabs/goya/goya.c | 86 +++++++++++++++++++------------------
+ 1 file changed, 44 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
-index 72eeb06..570b4e4 100644
---- a/drivers/phy/renesas/phy-rcar-gen2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen2.c
-@@ -285,6 +285,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 		error = of_property_read_u32(np, "reg", &channel_num);
- 		if (error || channel_num > 2) {
- 			dev_err(dev, "Invalid \"reg\" property\n");
-+			of_node_put(np);
- 			return error;
- 		}
- 		channel->select_mask = select_mask[channel_num];
-@@ -300,6 +301,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 						   &rcar_gen2_phy_ops);
- 			if (IS_ERR(phy->phy)) {
- 				dev_err(dev, "Failed to create PHY\n");
-+				of_node_put(np);
- 				return PTR_ERR(phy->phy);
- 			}
- 			phy_set_drvdata(phy->phy, phy);
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index fc53cdb..e0f1ba6 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -393,7 +393,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->high_pll = PLL_HIGH_DEFAULT;
+ }
+ 
+-int goya_send_pci_access_msg(struct hl_device *hdev, u32 opcode)
++static int goya_send_pci_access_msg(struct hl_device *hdev, u32 opcode)
+ {
+ 	struct armcp_packet pkt;
+ 
+@@ -414,7 +414,7 @@ int goya_send_pci_access_msg(struct hl_device *hdev, u32 opcode)
+  * Returns 0 on success
+  *
+  */
+-int goya_pci_bars_map(struct hl_device *hdev)
++static int goya_pci_bars_map(struct hl_device *hdev)
+ {
+ 	struct pci_dev *pdev = hdev->pdev;
+ 	int rc;
+@@ -554,7 +554,7 @@ static int goya_iatu_write(struct hl_device *hdev, u32 addr, u32 data)
+ 	return 0;
+ }
+ 
+-void goya_reset_link_through_bridge(struct hl_device *hdev)
++static void goya_reset_link_through_bridge(struct hl_device *hdev)
+ {
+ 	struct pci_dev *pdev = hdev->pdev;
+ 	struct pci_dev *parent_port;
+@@ -771,7 +771,7 @@ static int goya_early_init(struct hl_device *hdev)
+  * Unmap PCI bars
+  *
+  */
+-int goya_early_fini(struct hl_device *hdev)
++static int goya_early_fini(struct hl_device *hdev)
+ {
+ 	goya_pci_bars_unmap(hdev);
+ 
+@@ -854,7 +854,7 @@ static int goya_late_init(struct hl_device *hdev)
+  *
+  * Free sensors allocated structures
+  */
+-void goya_late_fini(struct hl_device *hdev)
++static void goya_late_fini(struct hl_device *hdev)
+ {
+ 	const struct hwmon_channel_info **channel_info_arr;
+ 	int i = 0;
+@@ -968,7 +968,7 @@ static int goya_sw_init(struct hl_device *hdev)
+  * @hdev: pointer to hl_device structure
+  *
+  */
+-int goya_sw_fini(struct hl_device *hdev)
++static int goya_sw_fini(struct hl_device *hdev)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+ 
+@@ -1230,7 +1230,7 @@ static void goya_resume_external_queues(struct hl_device *hdev)
+  * Returns 0 on success
+  *
+  */
+-int goya_init_cpu_queues(struct hl_device *hdev)
++static int goya_init_cpu_queues(struct hl_device *hdev)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+ 	struct hl_eq *eq;
+@@ -2911,7 +2911,7 @@ static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
+ 	}
+ }
+ 
+-int goya_suspend(struct hl_device *hdev)
++static int goya_suspend(struct hl_device *hdev)
+ {
+ 	int rc;
+ 
+@@ -2936,7 +2936,7 @@ int goya_suspend(struct hl_device *hdev)
+ 	return rc;
+ }
+ 
+-int goya_resume(struct hl_device *hdev)
++static int goya_resume(struct hl_device *hdev)
+ {
+ 	int rc;
+ 
+@@ -2949,13 +2949,13 @@ int goya_resume(struct hl_device *hdev)
+ 	return rc;
+ }
+ 
+-int goya_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
++static int goya_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
+ {
+ 	return -EINVAL;
+ }
+ 
+-int goya_cb_mmap(struct hl_device *hdev, struct vm_area_struct *vma,
+-		u64 kaddress, phys_addr_t paddress, u32 size)
++static int goya_cb_mmap(struct hl_device *hdev, struct vm_area_struct *vma,
++			u64 kaddress, phys_addr_t paddress, u32 size)
+ {
+ 	int rc;
+ 
+@@ -2970,7 +2970,7 @@ int goya_cb_mmap(struct hl_device *hdev, struct vm_area_struct *vma,
+ 	return rc;
+ }
+ 
+-void goya_ring_doorbell(struct hl_device *hdev, u32 hw_queue_id, u32 pi)
++static void goya_ring_doorbell(struct hl_device *hdev, u32 hw_queue_id, u32 pi)
+ {
+ 	u32 db_reg_offset, db_value;
+ 	bool invalid_queue = false;
+@@ -3060,25 +3060,25 @@ void goya_ring_doorbell(struct hl_device *hdev, u32 hw_queue_id, u32 pi)
+ 				GOYA_ASYNC_EVENT_ID_PI_UPDATE);
+ }
+ 
+-void goya_flush_pq_write(struct hl_device *hdev, u64 *pq, u64 exp_val)
++static void goya_flush_pq_write(struct hl_device *hdev, u64 *pq, u64 exp_val)
+ {
+ 	/* Not needed in Goya */
+ }
+ 
+-void *goya_dma_alloc_coherent(struct hl_device *hdev, size_t size,
+-					dma_addr_t *dma_handle, gfp_t flags)
++static void *goya_dma_alloc_coherent(struct hl_device *hdev, size_t size,
++				     dma_addr_t *dma_handle, gfp_t flags)
+ {
+ 	return dma_alloc_coherent(&hdev->pdev->dev, size, dma_handle, flags);
+ }
+ 
+-void goya_dma_free_coherent(struct hl_device *hdev, size_t size, void *cpu_addr,
+-				dma_addr_t dma_handle)
++static void goya_dma_free_coherent(struct hl_device *hdev, size_t size,
++				   void *cpu_addr, dma_addr_t dma_handle)
+ {
+ 	dma_free_coherent(&hdev->pdev->dev, size, cpu_addr, dma_handle);
+ }
+ 
+-void *goya_get_int_queue_base(struct hl_device *hdev, u32 queue_id,
+-				dma_addr_t *dma_handle,	u16 *queue_len)
++static void *goya_get_int_queue_base(struct hl_device *hdev, u32 queue_id,
++				     dma_addr_t *dma_handle, u16 *queue_len)
+ {
+ 	void *base;
+ 	u32 offset;
+@@ -3135,7 +3135,7 @@ void *goya_get_int_queue_base(struct hl_device *hdev, u32 queue_id,
+ 	return base;
+ }
+ 
+-int goya_send_job_on_qman0(struct hl_device *hdev, struct hl_cs_job *job)
++static int goya_send_job_on_qman0(struct hl_device *hdev, struct hl_cs_job *job)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+ 	struct packet_msg_prot *fence_pkt;
+@@ -3214,7 +3214,7 @@ int goya_send_job_on_qman0(struct hl_device *hdev, struct hl_cs_job *job)
+ }
+ 
+ int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
+-				u32 timeout, long *result)
++			  u32 timeout, long *result)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+ 	struct armcp_packet *pkt;
+@@ -3292,7 +3292,7 @@ int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
+ 	return rc;
+ }
+ 
+-int goya_test_queue(struct hl_device *hdev, u32 hw_queue_id)
++static int goya_test_queue(struct hl_device *hdev, u32 hw_queue_id)
+ {
+ 	struct packet_msg_prot *fence_pkt;
+ 	dma_addr_t pkt_dma_addr;
+@@ -3414,8 +3414,8 @@ static int goya_test_queues(struct hl_device *hdev)
+ 	return ret_val;
+ }
+ 
+-void *goya_dma_pool_zalloc(struct hl_device *hdev, size_t size, gfp_t mem_flags,
+-				dma_addr_t *dma_handle)
++static void *goya_dma_pool_zalloc(struct hl_device *hdev, size_t size,
++				  gfp_t mem_flags, dma_addr_t *dma_handle)
+ {
+ 	if (size > GOYA_DMA_POOL_BLK_SIZE)
+ 		return NULL;
+@@ -3423,14 +3423,15 @@ void *goya_dma_pool_zalloc(struct hl_device *hdev, size_t size, gfp_t mem_flags,
+ 	return dma_pool_zalloc(hdev->dma_pool, mem_flags, dma_handle);
+ }
+ 
+-void goya_dma_pool_free(struct hl_device *hdev, void *vaddr,
+-			dma_addr_t dma_addr)
++static void goya_dma_pool_free(struct hl_device *hdev, void *vaddr,
++			       dma_addr_t dma_addr)
+ {
+ 	dma_pool_free(hdev->dma_pool, vaddr, dma_addr);
+ }
+ 
+-void *goya_cpu_accessible_dma_pool_alloc(struct hl_device *hdev, size_t size,
+-			dma_addr_t *dma_handle)
++static void *goya_cpu_accessible_dma_pool_alloc(struct hl_device *hdev,
++						size_t size,
++						dma_addr_t *dma_handle)
+ {
+ 	u64 kernel_addr;
+ 
+@@ -3445,8 +3446,8 @@ void *goya_cpu_accessible_dma_pool_alloc(struct hl_device *hdev, size_t size,
+ 	return (void *) (uintptr_t) kernel_addr;
+ }
+ 
+-void goya_cpu_accessible_dma_pool_free(struct hl_device *hdev, size_t size,
+-			void *vaddr)
++static void goya_cpu_accessible_dma_pool_free(struct hl_device *hdev,
++					      size_t size, void *vaddr)
+ {
+ 	/* roundup to CPU_PKT_SIZE */
+ 	size = (size + (CPU_PKT_SIZE - 1)) & CPU_PKT_MASK;
+@@ -3455,8 +3456,8 @@ void goya_cpu_accessible_dma_pool_free(struct hl_device *hdev, size_t size,
+ 			size);
+ }
+ 
+-int goya_dma_map_sg(struct hl_device *hdev, struct scatterlist *sg, int nents,
+-			enum dma_data_direction dir)
++static int goya_dma_map_sg(struct hl_device *hdev, struct scatterlist *sg,
++			   int nents, enum dma_data_direction dir)
+ {
+ 	if (!dma_map_sg(&hdev->pdev->dev, sg, nents, dir))
+ 		return -ENOMEM;
+@@ -3464,14 +3465,14 @@ int goya_dma_map_sg(struct hl_device *hdev, struct scatterlist *sg, int nents,
+ 	return 0;
+ }
+ 
+-void goya_dma_unmap_sg(struct hl_device *hdev, struct scatterlist *sg,
+-			int nents, enum dma_data_direction dir)
++static void goya_dma_unmap_sg(struct hl_device *hdev, struct scatterlist *sg,
++			      int nents, enum dma_data_direction dir)
+ {
+ 	dma_unmap_sg(&hdev->pdev->dev, sg, nents, dir);
+ }
+ 
+-u32 goya_get_dma_desc_list_size(struct hl_device *hdev,
+-					struct sg_table *sgt)
++static u32 goya_get_dma_desc_list_size(struct hl_device *hdev,
++				       struct sg_table *sgt)
+ {
+ 	struct scatterlist *sg, *sg_next_iter;
+ 	u32 count, dma_desc_cnt;
+@@ -4207,7 +4208,8 @@ static int goya_parse_cb_mmu(struct hl_device *hdev,
+ 	return rc;
+ }
+ 
+-int goya_parse_cb_no_mmu(struct hl_device *hdev, struct hl_cs_parser *parser)
++static int goya_parse_cb_no_mmu(struct hl_device *hdev,
++				struct hl_cs_parser *parser)
+ {
+ 	u64 patched_cb_handle;
+ 	int rc;
+@@ -4258,7 +4260,7 @@ int goya_parse_cb_no_mmu(struct hl_device *hdev, struct hl_cs_parser *parser)
+ 	return rc;
+ }
+ 
+-int goya_parse_cb_no_ext_quque(struct hl_device *hdev,
++static int goya_parse_cb_no_ext_quque(struct hl_device *hdev,
+ 		struct hl_cs_parser *parser)
+ {
+ 	struct asic_fixed_properties *asic_prop = &hdev->asic_prop;
+@@ -4291,7 +4293,7 @@ int goya_parse_cb_no_ext_quque(struct hl_device *hdev,
+ 	return 0;
+ }
+ 
+-int goya_cs_parser(struct hl_device *hdev, struct hl_cs_parser *parser)
++static int goya_cs_parser(struct hl_device *hdev, struct hl_cs_parser *parser)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+ 
+@@ -4304,8 +4306,8 @@ int goya_cs_parser(struct hl_device *hdev, struct hl_cs_parser *parser)
+ 		return goya_parse_cb_no_mmu(hdev, parser);
+ }
+ 
+-void goya_add_end_of_cb_packets(u64 kernel_address, u32 len, u64 cq_addr,
+-				u32 cq_val, u32 msix_vec)
++static void goya_add_end_of_cb_packets(u64 kernel_address, u32 len, u64 cq_addr,
++				       u32 cq_val, u32 msix_vec)
+ {
+ 	struct packet_msg_prot *cq_pkt;
+ 
 -- 
-2.7.4
+2.7.0
+
 
